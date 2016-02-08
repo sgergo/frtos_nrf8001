@@ -34,7 +34,6 @@ and the received ACI event is placed in the tail of the event queue.
 #ifndef HAL_ACI_TL_H__
 #define HAL_ACI_TL_H__
 
-#include "spi.h"
 #include <stdint.h>
 #include <stdbool.h>
 

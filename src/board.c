@@ -11,12 +11,37 @@
 #include "utils/uartstdio.h"
 #include "board_spi.h"
 #include "board_uart.h"
+#include "board_ble.h"
 
 
 static void board_configure_led(void) {
 	ROM_SysCtlPeripheralEnable(LED_ALL_PINPERIPHERIAL);
     ROM_GPIOPinTypeGPIOOutput(LED_ALL_PORTBASE, LED_RED|LED_BLUE|LED_GREEN);
     ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_RED|LED_GREEN|LED_BLUE, 0); // Switch off all LEDs
+}
+
+void board_red_led_on(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_RED, LED_RED); 
+}
+
+void board_red_led_off(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_RED, 0); 
+}
+
+void board_blue_led_on(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_BLUE, LED_BLUE); 
+}
+
+void board_blue_led_off(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_BLUE, 0); 
+}
+
+void board_green_led_on(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_GREEN, LED_GREEN); 
+}
+
+void board_green_led_off(void) {
+    ROM_GPIOPinWrite(LED_ALL_PORTBASE, LED_GREEN, 0); 
 }
 
 static void board_configure_systemclock(void) {

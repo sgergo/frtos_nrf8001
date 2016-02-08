@@ -17,10 +17,22 @@
 
 #include "hal_aci_tl.h"
 #include "ble_system.h"
-#include "board_spi.h"
-#include "board_ble.h"
 #include <string.h>
 #include "driverlib/ssi.h"
+
+#include "inc/hw_memmap.h"
+#include "inc/hw_types.h"
+#include "inc/hw_ints.h"
+#include "driverlib/gpio.h"
+#include "driverlib/pin_map.h"
+#include "driverlib/rom.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/interrupt.h"
+
+
+#include "boardconfig.h"
+#include "board_spi.h"
+#include "board_ble.h"
 
 typedef struct {
  hal_aci_data_t           aci_data[ACI_QUEUE_SIZE];
@@ -91,7 +103,7 @@ static bool m_aci_q_is_full(aci_queue_t *aci_q)
   
   //This should be done in a critical section
   //noInterrupts();
-  _disable_interrupts();
+  IntMasterDisable();
   next = (aci_q->tail + 1) % ACI_QUEUE_SIZE;  
   
   if (next == aci_q->head)
@@ -104,7 +116,7 @@ static bool m_aci_q_is_full(aci_queue_t *aci_q)
   }
   
   //interrupts();
-  _enable_interrupts();
+  IntMasterEnable();
   //end
   
   return state;
@@ -186,7 +198,8 @@ void hal_aci_tl_init()
 {
 	received_data.buffer[0] = 0;
 
-	configureNRF8001Interface();
+	// configureNRF8001Interface();
+  board_ble_configure_pins();
 
 	/* initialize aci cmd queue */
 	m_aci_q_init(&aci_tx_q);
@@ -315,7 +328,8 @@ hal_aci_data_t * hal_aci_tl_poll_get(void)
 	SET_REQN_LOW();
 
 	// Wait for RDYN to go low, if it's not already low
-	while((GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_1) & GPIO_PIN_1) == 1);
+	while((GPIOPinRead(BLE_RDYN_PORTBASE, BLE_RDYN_PIN) & BLE_RDYN_PIN) == 1)
+    ;
 
 
   // Receive from queue
@@ -374,7 +388,8 @@ hal_aci_data_t * hal_aci_tl_poll_get(void)
 		SET_REQN_LOW();
 
 		// Wait for RDYN to be called
-		while((GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_1) & GPIO_PIN_1) == 1);
+		while((GPIOPinRead(BLE_RDYN_PORTBASE, BLE_RDYN_PIN) & BLE_RDYN_PIN) == 1)
+      ;
   }
   
   //sleep_enable();
@@ -401,35 +416,51 @@ hal_aci_data_t * hal_aci_tl_poll_get(void)
 
 // Receive a byte from the nRF8001 by sending
 // an ACI_BYTE.
+// static uint8_t spi_readwrite(const uint8_t aci_byte)
+// {
+// 	spiByteRxFlag = 0;
+
+
+
+// 	// Send byte and wait for byte back
+
+// 	/*
+
+// 	// Clear RX IFG
+// 	SPI_IFG &= ~(SPI_RX_IFG);
+
+// 	// Wait for SPI TX buffer to be ready
+// 	while(!(SPI_IFG & SPI_TX_IFG));
+// 	*/
+
+// 	SSIDataPut(SSI2_BASE,msbToLsb(aci_byte));
+
+// 	// Send byte over SPI
+// 	//SPI_TX_BUF = aci_byte;
+
+// 	// Wait until a byte has been received
+// 	SSIDataGet(SSI2_BASE,&rxByte);
+
+// 	volatile uint8_t rxB = rxByte;
+// 	volatile uint8_t rxLSB = msbToLsb(rxB);
+
+// 	return rxLSB;
+// }
+
 static uint8_t spi_readwrite(const uint8_t aci_byte)
 {
-	spiByteRxFlag = 0;
+  spiByteRxFlag = 0;
+  volatile uint8_t rxB;
 
 
 
-	// Send byte and wait for byte back
+  // Send byte and wait for byte back
+  // CS is managed before/after this function call
 
-	/*
-
-	// Clear RX IFG
-	SPI_IFG &= ~(SPI_RX_IFG);
-
-	// Wait for SPI TX buffer to be ready
-	while(!(SPI_IFG & SPI_TX_IFG));
-	*/
-
-	SSIDataPut(SSI2_BASE,msbToLsb(aci_byte));
-
-	// Send byte over SPI
-	//SPI_TX_BUF = aci_byte;
-
-	// Wait until a byte has been received
-	SSIDataGet(SSI2_BASE,&rxByte);
-
-	volatile uint8_t rxB = rxByte;
-	volatile uint8_t rxLSB = msbToLsb(rxB);
-
-	return rxLSB;
+  rxByte = board_spi_transfer_byte(aci_byte);
+  rxB = rxByte;
+  
+  return msbToLsb(rxB);
 }
 
 // USCI A0/B0 RX interrupt vector
@@ -457,7 +488,7 @@ uint8_t msbToLsb(uint8_t byte)
 	uint8_t lsbByte = 0;
 	for(i = 0; i < 8; i++)
 	{
-		if(byte & (1 << 7-i))
+		if(byte & (1 << (7-i)))
 			lsbByte |= (0x01 << i);
 	}
 
