@@ -26,7 +26,7 @@ uint8_t board_spi_transfer_byte(uint8_t data) {
 		;
 	ROM_SSIDataGet(SPIPERIPHERIALBASE, &retval);
 
-	return (uint8_t) retval;
+	return retval;
 }
 
 static void board_init_spi(void) {
@@ -43,7 +43,7 @@ static void board_init_spi(void) {
     ROM_GPIOPinConfigure(SPISIMOPINTYPE);
     ROM_GPIOPinTypeSSI(SPIPINPERIPHERIALBASE, SPISCLKPIN | SPISOMIPIN | SPISIMOPIN);
 
-    ROM_SSIConfigSetExpClk(SPIPERIPHERIALBASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_3, SSI_MODE_MASTER, 10000, 16);
+    ROM_SSIConfigSetExpClk(SPIPERIPHERIALBASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_1, SSI_MODE_MASTER, 10000, 16);
     ROM_SSIEnable(SPIPERIPHERIALBASE);
 
     // Read residual

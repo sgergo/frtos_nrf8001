@@ -50,24 +50,24 @@
 #define SPISIMOPIN							GPIO_PIN_7
 
 // Define SPI chip select (CS) pins here
-#define SPICSPINPERIPHERIAL					SYSCTL_PERIPH_GPIOB
-#define SPICSPINPERIPHERIALBASE				GPIO_PORTB_BASE
-#define SPICSPIN 							GPIO_PIN_2	
+#define SPICSPINPERIPHERIAL					SYSCTL_PERIPH_GPIOE
+#define SPICSPINPERIPHERIALBASE				GPIO_PORTE_BASE
+#define SPICSPIN 							GPIO_PIN_0	
 
 // Define BLE chip pins here
-#define BLE_REQN_PINPERIPHERIAL				SYSCTL_PERIPH_GPIOB // REQN = CS pin @ mikroE BLE p click module!
-#define BLE_REQN_PORTBASE					GPIO_PORTB_BASE // REQN = CS pin @ mikroE BLE p click module!
-#define BLE_REQN_PIN 						GPIO_PIN_2 // REQN = CS pin @ mikroE BLE p click module!
+#define BLE_REQN_PINPERIPHERIAL				SYSCTL_PERIPH_GPIOE // REQN = CS pin @ mikroE BLE p click module!
+#define BLE_REQN_PORTBASE					GPIO_PORTE_BASE // REQN = CS pin @ mikroE BLE p click module!
+#define BLE_REQN_PIN 						GPIO_PIN_0 // REQN = CS pin @ mikroE BLE p click module!
 
 #define BLE_RST_PINPERIPHERIAL				SYSCTL_PERIPH_GPIOA
 #define BLE_RST_PORTBASE					GPIO_PORTA_BASE
-#define BLE_RST_PIN 						GPIO_PIN_6
+#define BLE_RST_PIN 						GPIO_PIN_5
 
-#define BLE_RDYN_PINPERIPHERIAL				SYSCTL_PERIPH_GPIOA
-#define BLE_RDYN_PORTBASE					GPIO_PORTA_BASE
-#define BLE_RDYN_PIN 						GPIO_PIN_7
-#define BLE_RDYN_PORT_INT					INT_GPIOA
-#define BLE_RDYN_PIN_INT					GPIO_INT_PIN_7
+#define BLE_RDYN_PINPERIPHERIAL				SYSCTL_PERIPH_GPIOE
+#define BLE_RDYN_PORTBASE					GPIO_PORTE_BASE
+#define BLE_RDYN_PIN 						GPIO_PIN_4
+#define BLE_RDYN_PORT_INT					INT_GPIOE
+#define BLE_RDYN_PIN_INT					GPIO_INT_PIN_4
 
 
 

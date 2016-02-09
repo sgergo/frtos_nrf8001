@@ -10,12 +10,13 @@
 #include "driverlib/interrupt.h"
 
 #include "boardconfig.h"
+#include "board.h"
 
 #include "BLE/hal_aci_tl.h"
-// #include "BLE/aci.h"
-// #include "BLE/aci_evts.h"
-// #include "BLE/aci_cmds.h"
-// #include "BLE/lib_aci.h"
+#include "BLE/aci.h"
+#include "BLE/aci_evts.h"
+#include "BLE/aci_cmds.h"
+#include "BLE/lib_aci.h"
 
 
 
@@ -28,7 +29,7 @@ static void board_ble_rdyn_handler(void) {
 
 		// Set flag so it can be processed in the main loop
 		// rdynFlag = 1;
-		// board_blue_led_on();
+		board_blue_led_on();
 		m_rdy_line_handle();
 	}
 }

@@ -7,9 +7,11 @@
 #include "driverlib/rom.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
+#include "driverlib/interrupt.h"
 #include "utils/uartstdio.h"
 
 #include "board.h"
+#include "board_ble.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -57,27 +59,27 @@ int main(void) {
     // forever.
     // while(1)
        //  ;
+    IntMasterEnable();
     hal_aci_tl_init();
     board_ble_reset_nrf8001();
-    IntMasterEnable();
 
     while(1)
     {
-#if 0
+#if 1
         // We enter the if statement only when there is a ACI event available to be processed
         if (lib_aci_event_get(&aci_state, &aci_data))
         {
 
-            aci_evt_t * aci_evt;
-            board_red_led_on();
+            aci_evt_t *aci_evt;
             aci_evt = &aci_data.evt;
+            UARTprintf("aci_evt->evt_opcode: %02x\n", aci_evt->evt_opcode);
             switch(aci_evt->evt_opcode)
             {
                 /**
                 As soon as you reset the nRF8001 you will get an ACI Device Started Event
                 */
-
                 UARTprintf("aci_evt->evt_opcode: %02x\n", aci_evt->evt_opcode);
+                board_red_led_on();
                 case ACI_EVT_DEVICE_STARTED:
                 {
 
@@ -124,7 +126,7 @@ int main(void) {
         // No event in the ACI Event queue.
         // Arduino can go to sleep
         // Wakeup from sleep from the RDYN line
-            board_green_led_on();
+            // board_green_led_on();
         }
 #endif
     }

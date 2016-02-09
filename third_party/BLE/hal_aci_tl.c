@@ -460,7 +460,8 @@ static uint8_t spi_readwrite(const uint8_t aci_byte)
   rxByte = board_spi_transfer_byte(aci_byte);
   rxB = rxByte;
   
-  return msbToLsb(rxB);
+  // return msbToLsb(rxB);
+  return rxB;
 }
 
 // USCI A0/B0 RX interrupt vector
